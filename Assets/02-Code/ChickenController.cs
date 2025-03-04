@@ -1,20 +1,9 @@
 using UnityEngine;
-using System.Collections;
-using UnityEngine.SceneManagement;
-using TMPro;
 
 public class ChickenController : MonoBehaviour
 {
-    public float speed = 3f;  // Vitesse de la poule
-    private Vector2 direction = Vector2.right; // Direction
-    private TextMeshProUGUI gameOverText;
-
-    void Start()
-    {
-        // Trouve l'objet du texte dans la scène
-        gameOverText = GameObject.Find("GameOverText").GetComponent<TextMeshProUGUI>();
-        gameOverText.gameObject.SetActive(false); // Cache le texte au début
-    }
+    public float speed = 3f;
+    private Vector2 direction = Vector2.right;
 
     void Update()
     {
@@ -54,20 +43,13 @@ public class ChickenController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Mort"))
+        GameOverManager gameOverManager = Object.FindFirstObjectByType<GameOverManager>();
+        if (gameOverManager != null)
         {
-            Debug.Log("Ah AH AH gros naze t'es mort !");
-            StartCoroutine(GameOver());
+            gameOverManager.TriggerGameOver();
         }
-    }
 
-    IEnumerator GameOver()
-    {
-        gameOverText.gameObject.SetActive(true); // Affiche le message
-        yield return new WaitForSeconds(2f); // Attend 2 secondes
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Recharge la scène
     }
-
     void CheckScreenWrap()
     {
         Vector3 pos = transform.position;
