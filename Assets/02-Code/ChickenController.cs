@@ -56,7 +56,11 @@ public class ChickenController : MonoBehaviour
         GameOverManager gameOverManager = Object.FindFirstObjectByType<GameOverManager>();
         if (gameOverManager != null)
         {
-            gameOverManager.TriggerGameOver();
+            if (collision.CompareTag("Mort"))
+            {
+
+                gameOverManager.TriggerGameOver();
+            }
         }
     }
     void CheckScreenWrap()
