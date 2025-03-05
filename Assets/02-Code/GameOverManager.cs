@@ -13,7 +13,7 @@ public class GameOverManager : MonoBehaviour
 
     public void TriggerGameOver()
     {
-        Time.timeScale = 0; // Pause le jeu
+        Time.timeScale = 0; // Pause
         gameOverPanel.SetActive(true);
     }
 

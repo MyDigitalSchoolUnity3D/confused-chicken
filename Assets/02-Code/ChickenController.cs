@@ -1,9 +1,19 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ChickenController : MonoBehaviour
 {
     public float speed = 3f;
     private Vector2 direction = Vector2.right;
+    public static List<GameObject> chickens = new List<GameObject>();
+
+    void Start()
+    {
+        if (!chickens.Contains(gameObject))
+        {
+            chickens.Add(gameObject);
+        }
+    }
 
     void Update()
     {
@@ -48,7 +58,6 @@ public class ChickenController : MonoBehaviour
         {
             gameOverManager.TriggerGameOver();
         }
-
     }
     void CheckScreenWrap()
     {
@@ -66,5 +75,17 @@ public class ChickenController : MonoBehaviour
         }
 
         transform.position = pos;
+    }
+
+    void SpawnNewChicken()
+    {
+        GameObject lastChicken = ChickenController.chickens[ChickenController.chickens.Count - 1];
+
+        Vector3 newPosition = lastChicken.transform.position - (Vector3)direction * 0.5f;
+        GameObject newChicken = Instantiate(gameObject, newPosition, Quaternion.identity);
+
+        newChicken.AddComponent<ChickenFollower>().target = lastChicken.transform;
+
+        ChickenController.chickens.Add(newChicken);
     }
 }
