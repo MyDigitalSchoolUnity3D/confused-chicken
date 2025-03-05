@@ -2,29 +2,43 @@ using UnityEngine;
 
 public class EggSpawner : MonoBehaviour
 {
-    public GameObject eggPrefab;  // Assign your egg prefab in the inspector
-    public int eggsToEat = 10;    // Set the goal
-    public Vector2 spawnAreaMin;  // Bottom-left corner of spawn area
-    public Vector2 spawnAreaMax;  // Top-right corner of spawn area
+    public GameObject eggPrefab;
+    public int eggsToEat = 10;
+    public float gridSize = 1f;
+    public int gridWidth = 16;
+    public int gridHeight = 9;
 
     private int eggsEaten = 0;
     private GameObject currentEgg;
+    private int gridXMin, gridXMax, gridYMin, gridYMax;
 
     void Start()
     {
+        CalculateGridBounds();
         SpawnEgg();
+    }
+
+    void CalculateGridBounds()
+    {
+        gridXMin = 0;
+        gridXMax = gridWidth - 1;
+        gridYMin = 0;
+        gridYMax = gridHeight - 1;
+
     }
 
     void SpawnEgg()
     {
-        if (eggsEaten >= eggsToEat) return;  // Stop when goal is reached
+        if (eggsEaten >= eggsToEat) return;
 
-        Vector2 randomPosition = new Vector2(
-            Random.Range(spawnAreaMin.x, spawnAreaMax.x),
-            Random.Range(spawnAreaMin.y, spawnAreaMax.y)
-        );
+        int randomGridX = Random.Range(gridXMin, gridXMax);
+        int randomGridY = Random.Range(gridYMin, gridYMax);
 
-        currentEgg = Instantiate(eggPrefab, randomPosition, Quaternion.identity);
+        Vector2 spawnPosition = new Vector2(randomGridX * gridSize, randomGridY * gridSize);
+
+        Debug.Log($" Egg Position: {spawnPosition}");
+
+        currentEgg = Instantiate(eggPrefab, spawnPosition, Quaternion.identity);
     }
 
     public void EggEaten()

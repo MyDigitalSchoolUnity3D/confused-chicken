@@ -32,7 +32,7 @@ public class GridManager : MonoBehaviour
                 spawnedTile.Init(isOffset);
 
 
-                // _tiles[new Vector2(x, y)] = spawnedTile;
+                _tiles[new Vector2(x, y)] = spawnedTile;
             }
         }
 
