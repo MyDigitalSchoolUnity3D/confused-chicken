@@ -25,6 +25,9 @@ public class EggSpawner : MonoBehaviour
         gridYMin = 0;
         gridYMax = gridHeight - 1;
 
+        Debug.Log($"{gridXMin} {gridYMax} {gridYMin} {gridXMax}");
+
+
     }
 
     void SpawnEgg()
@@ -34,11 +37,23 @@ public class EggSpawner : MonoBehaviour
         int randomGridX = Random.Range(gridXMin, gridXMax);
         int randomGridY = Random.Range(gridYMin, gridYMax);
 
+        // var newEgg = Instantiate(eggPrefab, Vector3.zero, Quaternion.identity);
+        // var newEgg2 = Instantiate(eggPrefab, Vector3.zero, Quaternion.identity);
+        // var newEgg3 = Instantiate(eggPrefab, Vector3.zero, Quaternion.identity);
+        // var newEgg4 = Instantiate(eggPrefab, Vector3.zero, Quaternion.identity);
+
+        // newEgg.transform.position = new Vector2(gridXMin, gridYMax);
+        // newEgg2.transform.position = new Vector2(gridXMax, gridYMin);
+        // newEgg3.transform.position = new Vector2(gridXMax, gridYMax);
+        // newEgg4.transform.position = new Vector2(gridXMin, gridYMin);
+
+
         Vector2 spawnPosition = new Vector2(randomGridX * gridSize, randomGridY * gridSize);
 
         Debug.Log($" Egg Position: {spawnPosition}");
 
-        currentEgg = Instantiate(eggPrefab, spawnPosition, Quaternion.identity);
+        currentEgg = Instantiate(eggPrefab, Vector2.zero, Quaternion.identity);
+        currentEgg.transform.localPosition = spawnPosition;
     }
 
     public void EggEaten()
