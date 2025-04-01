@@ -1,14 +1,20 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class GameOverManager : MonoBehaviour
 {
     public GameObject gameOverPanel;
+    public Button rejouerButton;
+    public Button quitterButton;
 
     void Start()
     {
         gameOverPanel.SetActive(false);
+
+        rejouerButton.onClick.AddListener(Rejouer);
+        quitterButton.onClick.AddListener(Quitter);
     }
 
     public void TriggerGameOver()
@@ -17,23 +23,37 @@ public class GameOverManager : MonoBehaviour
         gameOverPanel.SetActive(true);
     }
 
-    void Update()
+    void Rejouer()
     {
-        if (gameOverPanel.activeSelf)
-        {
-            if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
-            {
-                Time.timeScale = 1;
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            }
-            else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
-            {
-                Application.Quit();
-
-#if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-#endif
-            }
-        }
+        Time.timeScale = 1;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    void Quitter()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
+    //     void Update()
+    //     {
+    //         if (gameOverPanel.activeSelf)
+    //         {
+    //             if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
+    //             {
+    //                 Time.timeScale = 1;
+    //                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    //             }
+    //             else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
+    //             {
+    //                 Application.Quit();
+
+    // #if UNITY_EDITOR
+    //                 UnityEditor.EditorApplication.isPlaying = false;
+    // #endif
+    //             }
+    //         }
+    //     }
 }
