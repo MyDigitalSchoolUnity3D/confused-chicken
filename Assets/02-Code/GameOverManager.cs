@@ -13,6 +13,10 @@ public class GameOverManager : MonoBehaviour
     public GameObject victoryPanel;
     public TextMeshProUGUI victoryText;
 
+    public Button rejouerVictoryButton;
+    public Button quitterVictoryButton;
+
+
     void Start()
     {
         Debug.Log("GameOverManager started");
@@ -29,6 +33,12 @@ public class GameOverManager : MonoBehaviour
         {
             Debug.Log("Victory panel found and initialized");
             victoryPanel.SetActive(false);
+
+            if (rejouerVictoryButton != null)
+                rejouerVictoryButton.onClick.AddListener(Rejouer);
+
+            if (quitterVictoryButton != null)
+                quitterVictoryButton.onClick.AddListener(Quitter);
         }
         else
         {
@@ -219,3 +229,4 @@ public class GameOverManager : MonoBehaviour
         }
     }
 }
+
