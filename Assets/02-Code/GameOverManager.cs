@@ -47,6 +47,10 @@ public class GameOverManager : MonoBehaviour
     public void Quitter()
     {
         Application.Quit();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; // Stoppe le mode Play dans l'éditeur
+#endif
     }
 
     // New method for victory
@@ -148,54 +152,54 @@ public class GameOverManager : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        bool shouldCheckInput = gameOverPanel.activeSelf;
+    //     void Update()
+    //     {
+    //         bool shouldCheckInput = gameOverPanel.activeSelf;
 
-        // Also check for victory panel if it exists
-        if (victoryPanel != null)
-        {
-            shouldCheckInput = shouldCheckInput || victoryPanel.activeSelf;
-        }
+    //         // Also check for victory panel if it exists
+    //         if (victoryPanel != null)
+    //         {
+    //             shouldCheckInput = shouldCheckInput || victoryPanel.activeSelf;
+    //         }
 
-        if (shouldCheckInput)
-        {
-            if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
-            {
-                Time.timeScale = 1;
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            }
-            else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
-            {
-                Application.Quit();
+    //         if (shouldCheckInput)
+    //         {
+    //             if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
+    //             {
+    //                 Time.timeScale = 1;
+    //                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    //             }
+    //             else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
+    //             {
+    //                 Application.Quit();
 
-#if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-#endif
-            }
+    // #if UNITY_EDITOR
+    //                 UnityEditor.EditorApplication.isPlaying = false;
+    // #endif
+    //             }
 
 
-            //     void Update()
-            //     {
-            //         if (gameOverPanel.activeSelf)
-            //         {
-            //             if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
-            //             {
-            //                 Time.timeScale = 1;
-            //                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            //             }
-            //             else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
-            //             {
-            //                 Application.Quit();
+    //             //     void Update()
+    //             //     {
+    //             //         if (gameOverPanel.activeSelf)
+    //             //         {
+    //             //             if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
+    //             //             {
+    //             //                 Time.timeScale = 1;
+    //             //                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    //             //             }
+    //             //             else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
+    //             //             {
+    //             //                 Application.Quit();
 
-            // #if UNITY_EDITOR
-            //                 UnityEditor.EditorApplication.isPlaying = false;
-            // #endif
-            //             }
-            //         }
-            //     }
-        }
+    //             // #if UNITY_EDITOR
+    //             //                 UnityEditor.EditorApplication.isPlaying = false;
+    //             // #endif
+    //             //             }
+    //             //         }
+    //             //     }
+    //         }
 
-    }
+    //     }
 
 }
