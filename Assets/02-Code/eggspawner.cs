@@ -3,11 +3,10 @@ using UnityEngine;
 public class EggSpawner : MonoBehaviour
 {
     public GameObject eggPrefab;
-    public int eggsToEat = 10;
+    public int eggsToEat = 3;
     public float gridSize = 1f;
     public int gridWidth = 16;
     public int gridHeight = 9;
-
     private int eggsEaten = 0;
     private GameObject currentEgg;
     private int gridXMin, gridXMax, gridYMin, gridYMax;
@@ -24,36 +23,36 @@ public class EggSpawner : MonoBehaviour
         gridXMax = gridWidth - 1;
         gridYMin = 0;
         gridYMax = gridHeight - 1;
-
-        Debug.Log($"{gridXMin} {gridYMax} {gridYMin} {gridXMax}");
-
-
+        Debug.Log($"Grid bounds: {gridXMin}, {gridXMax}, {gridYMin}, {gridYMax}");
     }
 
     void SpawnEgg()
     {
-        if (eggsEaten >= eggsToEat) return;
+        Debug.Log($"Eggs eaten: {eggsEaten} / {eggsToEat}");
+
+        // Check if we've reached the maximum number of eggs
+        if (eggsEaten >= eggsToEat)
+        {
+            Debug.Log("All eggs have been eaten! Triggering victory!");
+            TriggerVictory();
+            return;
+        }
 
         int randomGridX = Random.Range(gridXMin, gridXMax);
         int randomGridY = Random.Range(gridYMin, gridYMax);
 
-        // var newEgg = Instantiate(eggPrefab, Vector3.zero, Quaternion.identity);
-        // var newEgg2 = Instantiate(eggPrefab, Vector3.zero, Quaternion.identity);
-        // var newEgg3 = Instantiate(eggPrefab, Vector3.zero, Quaternion.identity);
-        // var newEgg4 = Instantiate(eggPrefab, Vector3.zero, Quaternion.identity);
-
-        // newEgg.transform.position = new Vector2(gridXMin, gridYMax);
-        // newEgg2.transform.position = new Vector2(gridXMax, gridYMin);
-        // newEgg3.transform.position = new Vector2(gridXMax, gridYMax);
-        // newEgg4.transform.position = new Vector2(gridXMin, gridYMin);
-
-
         Vector2 spawnPosition = new Vector2(randomGridX * gridSize, randomGridY * gridSize);
-
-        Debug.Log($" Egg Position: {spawnPosition}");
+        Debug.Log($"Egg Position: {spawnPosition}");
 
         currentEgg = Instantiate(eggPrefab, Vector2.zero, Quaternion.identity);
         currentEgg.transform.localPosition = spawnPosition;
+
+        // Make sure the egg has the correct tag
+        if (currentEgg.tag != "Egg")
+        {
+            Debug.LogWarning("Egg prefab does not have 'Egg' tag! Setting it now.");
+            currentEgg.tag = "Egg";
+        }
     }
 
     public void EggEaten()
@@ -62,7 +61,22 @@ public class EggSpawner : MonoBehaviour
         {
             Destroy(currentEgg);
             eggsEaten++;
-            SpawnEgg();
+            SpawnEgg(); // This will check if we've reached eggsToEat and trigger victory if needed
+        }
+    }
+
+    private void TriggerVictory()
+    {
+        // Find the GameOverManager and call TriggerVictory
+        GameOverManager gameOverManager = FindObjectOfType<GameOverManager>();
+        if (gameOverManager != null)
+        {
+            Debug.Log("Calling TriggerVictory on GameOverManager");
+            gameOverManager.TriggerVictory();
+        }
+        else
+        {
+            Debug.LogError("GameOverManager not found! Cannot trigger victory.");
         }
     }
 }
