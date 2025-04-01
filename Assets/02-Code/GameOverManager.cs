@@ -47,6 +47,7 @@ public class GameOverManager : MonoBehaviour
     public void Quitter()
     {
         Application.Quit();
+    }
 
     // New method for victory
     public void TriggerVictory()
@@ -169,31 +170,32 @@ public class GameOverManager : MonoBehaviour
                 Application.Quit();
 
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+                UnityEditor.EditorApplication.isPlaying = false;
 #endif
+            }
+
+
+            //     void Update()
+            //     {
+            //         if (gameOverPanel.activeSelf)
+            //         {
+            //             if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
+            //             {
+            //                 Time.timeScale = 1;
+            //                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            //             }
+            //             else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
+            //             {
+            //                 Application.Quit();
+
+            // #if UNITY_EDITOR
+            //                 UnityEditor.EditorApplication.isPlaying = false;
+            // #endif
+            //             }
+            //         }
+            //     }
+        }
+
     }
 
-
-    //     void Update()
-    //     {
-    //         if (gameOverPanel.activeSelf)
-    //         {
-    //             if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
-    //             {
-    //                 Time.timeScale = 1;
-    //                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    //             }
-    //             else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
-    //             {
-    //                 Application.Quit();
-
-    // #if UNITY_EDITOR
-    //                 UnityEditor.EditorApplication.isPlaying = false;
-    // #endif
-    //             }
-    //         }
-    //     }
 }
-
-}
-
