@@ -23,13 +23,15 @@ public class GameOverManager : MonoBehaviour
         gameOverPanel.SetActive(true);
     }
 
-    void Rejouer()
+    public void Rejouer()
     {
+        Debug.Log("CLIC SUR REJOUER");
         Time.timeScale = 1;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("scene1");
+
     }
 
-    void Quitter()
+    public void Quitter()
     {
         Application.Quit();
 #if UNITY_EDITOR
