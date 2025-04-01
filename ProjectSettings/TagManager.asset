@@ -4,11 +4,9 @@
 TagManager:
   serializedVersion: 3
   tags:
-niveau1
-  - Chicken
-
   - Mort
-main
+  - Chicken
+  - Egg
   layers:
   - Default
   - TransparentFX
