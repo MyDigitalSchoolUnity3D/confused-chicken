@@ -57,6 +57,10 @@ public class GameOverManager : MonoBehaviour
     public void Quitter()
     {
         Application.Quit();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; // Stoppe le mode Play dans l'éditeur
+#endif
     }
 
     // New method for victory
@@ -175,6 +179,57 @@ public class GameOverManager : MonoBehaviour
         Debug.Log("Victory UI elements created successfully");
     }
 
+
+    //     void Update()
+    //     {
+    //         bool shouldCheckInput = gameOverPanel.activeSelf;
+
+    //         // Also check for victory panel if it exists
+    //         if (victoryPanel != null)
+    //         {
+    //             shouldCheckInput = shouldCheckInput || victoryPanel.activeSelf;
+    //         }
+
+    //         if (shouldCheckInput)
+    //         {
+    //             if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
+    //             {
+    //                 Time.timeScale = 1;
+    //                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    //             }
+    //             else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
+    //             {
+    //                 Application.Quit();
+
+    // #if UNITY_EDITOR
+    //                 UnityEditor.EditorApplication.isPlaying = false;
+    // #endif
+    //             }
+
+
+    //             //     void Update()
+    //             //     {
+    //             //         if (gameOverPanel.activeSelf)
+    //             //         {
+    //             //             if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
+    //             //             {
+    //             //                 Time.timeScale = 1;
+    //             //                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    //             //             }
+    //             //             else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
+    //             //             {
+    //             //                 Application.Quit();
+
+    //             // #if UNITY_EDITOR
+    //             //                 UnityEditor.EditorApplication.isPlaying = false;
+    //             // #endif
+    //             //             }
+    //             //         }
+    //             //     }
+    //         }
+
+    //     }
+
     void Update()
     {
         bool shouldCheckInput = gameOverPanel.activeSelf;
@@ -226,5 +281,6 @@ public class GameOverManager : MonoBehaviour
         }
 
     }
+
 
 }
