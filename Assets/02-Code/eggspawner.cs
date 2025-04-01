@@ -3,7 +3,7 @@ using UnityEngine;
 public class EggSpawner : MonoBehaviour
 {
     public GameObject eggPrefab;
-    public int eggsToEat = 3;
+    public int eggsToEat = 10;
     public float gridSize = 1f;
     public int gridWidth = 16;
     public int gridHeight = 9;

@@ -18,6 +18,8 @@ public class GameOverManager : MonoBehaviour
         Debug.Log("GameOverManager started");
         gameOverPanel.SetActive(false);
 
+        // Time scale may be set to 0 from previous game
+        Time.timeScale = 1;
 
         rejouerButton.onClick.AddListener(Rejouer);
         quitterButton.onClick.AddListener(Quitter);
@@ -28,14 +30,10 @@ public class GameOverManager : MonoBehaviour
             Debug.Log("Victory panel found and initialized");
             victoryPanel.SetActive(false);
         }
-
         else
         {
             Debug.Log("No victory panel assigned to GameOverManager");
         }
-
-
-
     }
 
     public void TriggerGameOver()
@@ -45,18 +43,19 @@ public class GameOverManager : MonoBehaviour
         gameOverPanel.SetActive(true);
     }
 
-
     public void Rejouer()
     {
         Debug.Log("CLIC SUR REJOUER");
-        Time.timeScale = 1;
-        UnityEngine.SceneManagement.SceneManager.LoadScene("scene1");
-
+        ResetGame();
     }
 
     public void Quitter()
     {
         Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false; // Stoppe le mode Play dans l'éditeur
@@ -92,6 +91,24 @@ public class GameOverManager : MonoBehaviour
             Debug.Log("No victory panel found, creating one");
             CreateVictoryText();
         }
+    }
+
+    // New method to reset static variables and restart the game
+    private void ResetGame()
+    {
+        // Reset static variables from ChickenController
+        if (ChickenController.chickens != null)
+        {
+            Debug.Log("Clearing chickens list before scene reload");
+            ChickenController.chickens.Clear();
+        }
+
+        // Reset time scale
+        Time.timeScale = 1;
+
+        // Reload the scene
+        SceneManager.LoadScene("scene1");
+        Debug.Log("Reset game and reloaded scene");
     }
 
     // Creates a simple victory text if no victory panel exists
@@ -245,18 +262,20 @@ public class GameOverManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
             {
                 Debug.Log("Enter key pressed, restarting game");
-                Time.timeScale = 1;
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                ResetGame();
             }
             else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
             {
                 Debug.Log("Escape key pressed, quitting game");
                 Application.Quit();
-
 #if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
 #endif
             }
+
+        }
+    }
+
 
 
             //     void Update()
