@@ -77,11 +77,21 @@ public class ChickenController : MonoBehaviour
     {
         if (collision.CompareTag("Egg"))
         {
-            Destroy(collision.gameObject);
-            SpawnNewChicken();
+            // Instead of directly destroying the egg, notify the egg spawner
+            EggSpawner eggSpawner = FindObjectOfType<EggSpawner>();
+            if (eggSpawner != null)
+            {
+                eggSpawner.EggEaten();
+            }
+            else
+            {
+                // Fallback if no EggSpawner is found
+                Destroy(collision.gameObject);
+                SpawnNewChicken();
+            }
 
-            // Check if this was the last egg
-            CheckAllEggsCollected();
+            // Add a new chicken segment regardless
+            SpawnNewChicken();
         }
         else if (collision.CompareTag("Chicken") && IsSelfCollision(collision.gameObject))
         {
@@ -103,9 +113,13 @@ public class ChickenController : MonoBehaviour
         // Find all remaining eggs in the scene
         GameObject[] remainingEggs = GameObject.FindGameObjectsWithTag("Egg");
 
+        // Debug the egg count
+        Debug.Log("Remaining eggs: " + remainingEggs.Length);
+
         // If no eggs remain, player has won
         if (remainingEggs.Length == 0)
         {
+            Debug.Log("No eggs remaining, triggering victory!");
             VictoryAchieved();
         }
     }
@@ -116,12 +130,16 @@ public class ChickenController : MonoBehaviour
 
         // Try to find the GameOverManager to display victory message
         GameOverManager gameOverManager = Object.FindFirstObjectByType<GameOverManager>();
+        Debug.Log("GameOverManager found: " + (gameOverManager != null));
+
         if (gameOverManager != null)
         {
+            Debug.Log("Calling TriggerVictory on GameOverManager");
             gameOverManager.TriggerVictory();
         }
         else
         {
+            Debug.Log("No GameOverManager found, creating direct victory message");
             // If no GameOverManager is available, create a simple victory message
             DisplayVictoryMessage();
         }
