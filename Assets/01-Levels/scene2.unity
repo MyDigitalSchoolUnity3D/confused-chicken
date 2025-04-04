@@ -1313,7 +1313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eggPrefab: {fileID: 4358487729820915497, guid: 6d82d5d00f1b24299b137343164e0752, type: 3}
-  eggsToEat: 10
+  eggsToEat: 20
   gridSize: 1
   gridWidth: 16
   gridHeight: 9

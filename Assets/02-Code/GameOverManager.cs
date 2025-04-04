@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameOverManager : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class GameOverManager : MonoBehaviour
 
     public GameObject victoryPanel;
     public TextMeshProUGUI victoryText;
+
+    public Button rejouerVictoryButton;
+    public Button quitterVictoryButton;
+
 
     void Start()
     {
@@ -26,6 +31,12 @@ public class GameOverManager : MonoBehaviour
         {
             Debug.Log("Victory panel found and initialized");
             victoryPanel.SetActive(false);
+
+            if (rejouerVictoryButton != null)
+                rejouerVictoryButton.onClick.AddListener(Rejouer);
+
+            if (quitterVictoryButton != null)
+                quitterVictoryButton.onClick.AddListener(Quitter);
         }
         else
         {
@@ -80,7 +91,13 @@ public class GameOverManager : MonoBehaviour
             Debug.Log("No victory panel found, creating one");
             CreateVictoryText();
         }
+
+        StartCoroutine(LoadNextSceneAfterDelay());
     }
+
+
+
+    // New method to reset static variables and restart the game
 
     void ResetGame()
     {
@@ -202,4 +219,17 @@ public class GameOverManager : MonoBehaviour
             }
         }
     }
+
 }
+
+
+    private IEnumerator LoadNextSceneAfterDelay()
+    {
+        yield return new WaitForSecondsRealtime(2f); // Laisse le temps d'afficher la victoire
+        Time.timeScale = 1; // Remet le jeu en route
+        UnityEngine.SceneManagement.SceneManager.LoadScene("scene2");
+    }
+
+}
+
+

@@ -13,11 +13,25 @@ public class ChickenController : MonoBehaviour
 
     void Start()
     {
+        // Vider la liste au début de la scène
+        if (chickens == null)
+        {
+            chickens = new List<GameObject>();
+        }
+
+        // S'assurer que c'est bien la scène 2, donc on nettoie
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "scene2")
+        {
+            chickens.Clear();
+        }
+
+        // Ajoute le poulet s'il n'est pas déjà là
         if (!chickens.Contains(gameObject))
         {
             chickens.Add(gameObject);
         }
 
+        // Collision désactivée temporairement si ce n'est pas le premier
         if (chickens.Count > 1)
         {
             StartCoroutine(EnableCollisionAfterDelay(0.5f));
@@ -27,6 +41,7 @@ public class ChickenController : MonoBehaviour
             isSafe = false;
         }
     }
+
 
     IEnumerator EnableCollisionAfterDelay(float delay)
     {
@@ -149,7 +164,10 @@ public class ChickenController : MonoBehaviour
         if (gameOverManager != null)
         {
             Debug.Log("Calling TriggerVictory on GameOverManager");
-            gameOverManager.TriggerVictory();
+            // gameOverManager.TriggerVictory();
+            // UnityEngine.SceneManagement.SceneManager.LoadScene("scene2");
+            StartCoroutine(LoadNextSceneAfterVictory(gameOverManager));
+
         }
         else
         {
@@ -298,4 +316,15 @@ public class ChickenController : MonoBehaviour
 
         StartCoroutine(EnableColliderAfterDelay(newChicken, 0.5f));
     }
+    IEnumerator LoadNextSceneAfterVictory(GameOverManager gameOverManager)
+    {
+        gameOverManager.TriggerVictory();
+        yield return new WaitForSecondsRealtime(2f);
+
+        Debug.Log("Chargement de scene2...");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("scene2");
+    }
+
+
+
 }
