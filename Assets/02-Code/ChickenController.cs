@@ -7,8 +7,9 @@ public class ChickenController : MonoBehaviour
     public float speed = 3f;
     private Vector2 direction = Vector2.right;
     public static List<GameObject> chickens = new List<GameObject>();
-    private bool isSafe = true; // New chickens are "safe" for a short time
-    private bool isWrapping = false; // Flag to prevent multiple wraps
+    private bool isSafe = true;
+    private bool isWrapping = false;
+    private bool isProcessingEgg = false;
 
     void Start()
     {
@@ -45,7 +46,7 @@ public class ChickenController : MonoBehaviour
     IEnumerator EnableCollisionAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        isSafe = false;  // Enable self-collision after delay
+        isSafe = false;
     }
 
     void Update()
@@ -89,23 +90,28 @@ public class ChickenController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Egg"))
+        if (collision.CompareTag("Egg") && !isProcessingEgg)
         {
-            // Instead of directly destroying the egg, notify the egg spawner
+            // Set the flag to prevent multiple collisions
+            isProcessingEgg = true;
+
+            // Add a new chicken segment
+            SpawnNewChicken();
+
+            // Find the EggSpawner to notify it
             EggSpawner eggSpawner = FindObjectOfType<EggSpawner>();
             if (eggSpawner != null)
             {
+                // This is the proper way - let EggSpawner handle the egg
                 eggSpawner.EggEaten();
             }
             else
             {
-                // Fallback if no EggSpawner is found
+                Debug.LogError("EggSpawner not found! Game logic may break.");
                 Destroy(collision.gameObject);
-                SpawnNewChicken();
             }
 
-            // Add a new chicken segment regardless
-            SpawnNewChicken();
+            StartCoroutine(ResetEggProcessingFlag());
         }
         else if (collision.CompareTag("Chicken") && IsSelfCollision(collision.gameObject))
         {
@@ -122,15 +128,25 @@ public class ChickenController : MonoBehaviour
         }
     }
 
+    IEnumerator ResetEggProcessingFlag()
+    {
+        yield return new WaitForFixedUpdate();
+        isProcessingEgg = false;
+    }
+
+    bool IsSelfCollision(GameObject otherChicken)
+    {
+        int chickenIndex = chickens.IndexOf(otherChicken);
+        return chickenIndex >= 5;
+    }
+
+
     void CheckAllEggsCollected()
     {
-        // Find all remaining eggs in the scene
         GameObject[] remainingEggs = GameObject.FindGameObjectsWithTag("Egg");
 
-        // Debug the egg count
         Debug.Log("Remaining eggs: " + remainingEggs.Length);
 
-        // If no eggs remain, player has won
         if (remainingEggs.Length == 0)
         {
             Debug.Log("No eggs remaining, triggering victory!");
@@ -142,7 +158,6 @@ public class ChickenController : MonoBehaviour
     {
         Debug.Log("Victory! All eggs collected!");
 
-        // Try to find the GameOverManager to display victory message
         GameOverManager gameOverManager = Object.FindFirstObjectByType<GameOverManager>();
         Debug.Log("GameOverManager found: " + (gameOverManager != null));
 
@@ -157,20 +172,17 @@ public class ChickenController : MonoBehaviour
         else
         {
             Debug.Log("No GameOverManager found, creating direct victory message");
-            // If no GameOverManager is available, create a simple victory message
             DisplayVictoryMessage();
         }
     }
 
     void DisplayVictoryMessage()
     {
-        // Create a simple UI text to display victory
         GameObject victoryText = new GameObject("VictoryText");
         Canvas canvas = FindObjectOfType<Canvas>();
 
         if (canvas == null)
         {
-            // Create canvas if none exists
             GameObject canvasObj = new GameObject("Canvas");
             canvas = canvasObj.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -195,12 +207,6 @@ public class ChickenController : MonoBehaviour
         Time.timeScale = 0;
     }
 
-    bool IsSelfCollision(GameObject otherChicken)
-    {
-        int chickenIndex = chickens.IndexOf(otherChicken);
-        return chickenIndex >= 5;
-    }
-
     void GameOver()
     {
         Debug.Log("Game Over! The chicken train collided with itself.");
@@ -213,12 +219,12 @@ public class ChickenController : MonoBehaviour
 
     void CheckScreenWrap()
     {
-        if (chickens[0] != gameObject || isWrapping) return; // Only the leader wraps and not if already wrapping
+        if (chickens[0] != gameObject || isWrapping) return;
 
         Vector3 pos = transform.position;
         float screenLeft = Camera.main.ScreenToWorldPoint(Vector3.zero).x;
         float screenRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x;
-        float buffer = 0.1f; // Small buffer to prevent getting stuck in a wrapping loop
+        float buffer = 0.1f;
 
         if (pos.x < screenLeft)
         {
@@ -234,7 +240,6 @@ public class ChickenController : MonoBehaviour
     {
         isWrapping = true;
 
-        // Store the original positions and disable colliders during wrapping
         Vector3[] originalPositions = new Vector3[chickens.Count];
         Collider2D[] colliders = new Collider2D[chickens.Count];
 
@@ -248,19 +253,14 @@ public class ChickenController : MonoBehaviour
             }
         }
 
-        // Teleport the leader
         chickens[0].transform.position = new Vector3(newX, newY, 0);
 
-        // Explicitly force the physics system to update
         Physics2D.SyncTransforms();
 
-        // Wait for a frame to ensure the teleport happens
         yield return null;
 
-        // Now teleport the followers one by one with a tiny delay
         for (int i = 1; i < chickens.Count; i++)
         {
-            // Each follower takes the previous chicken's original position
             Vector3 previousPos = originalPositions[i - 1];
             chickens[i].transform.position = new Vector3(
                 previousPos.x + (newX - originalPositions[0].x),
@@ -270,7 +270,6 @@ public class ChickenController : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        // Re-enable colliders after a short delay
         yield return new WaitForSeconds(0.1f);
         for (int i = 0; i < chickens.Count; i++)
         {
