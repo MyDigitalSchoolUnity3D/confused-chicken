@@ -61,7 +61,7 @@ public class GameOverManager : MonoBehaviour
     {
         Application.Quit();
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
 
@@ -193,6 +193,15 @@ public class GameOverManager : MonoBehaviour
         Debug.Log("Victory UI elements created successfully");
     }
 
+    private IEnumerator LoadNextSceneAfterDelay()
+    {
+        yield return new WaitForSecondsRealtime(2f); // Laisse le temps d'afficher la victoire
+        Time.timeScale = 1; // Remet le jeu en route
+        UnityEngine.SceneManagement.SceneManager.LoadScene("scene2");
+    }
+
+
+
     void Update()
     {
         bool shouldCheckInput = gameOverPanel.activeSelf;
@@ -214,20 +223,10 @@ public class GameOverManager : MonoBehaviour
                 Debug.Log("Escape key pressed, quitting game");
                 Application.Quit();
 #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
+                    UnityEditor.EditorApplication.isPlaying = false;
 #endif
             }
         }
-    }
-
-}
-
-
-    private IEnumerator LoadNextSceneAfterDelay()
-    {
-        yield return new WaitForSecondsRealtime(2f); // Laisse le temps d'afficher la victoire
-        Time.timeScale = 1; // Remet le jeu en route
-        UnityEngine.SceneManagement.SceneManager.LoadScene("scene2");
     }
 
 }
