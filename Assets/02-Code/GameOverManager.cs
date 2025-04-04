@@ -10,7 +10,6 @@ public class GameOverManager : MonoBehaviour
     public Button rejouerButton;
     public Button quitterButton;
 
-    // Add victory panel
     public GameObject victoryPanel;
     public TextMeshProUGUI victoryText;
 
@@ -23,13 +22,11 @@ public class GameOverManager : MonoBehaviour
         Debug.Log("GameOverManager started");
         gameOverPanel.SetActive(false);
 
-        // Time scale may be set to 0 from previous game
         Time.timeScale = 1;
 
         rejouerButton.onClick.AddListener(Rejouer);
         quitterButton.onClick.AddListener(Quitter);
 
-        // Initialize victory panel if it exists
         if (victoryPanel != null)
         {
             Debug.Log("Victory panel found and initialized");
@@ -74,13 +71,11 @@ public class GameOverManager : MonoBehaviour
         Debug.Log("Victory triggered in GameOverManager");
         Time.timeScale = 0; // Pause
 
-        // Use victory panel if available
         if (victoryPanel != null)
         {
             Debug.Log("Activating victory panel");
             victoryPanel.SetActive(true);
 
-            // Set victory text if available
             if (victoryText != null)
             {
                 Debug.Log("Setting victory text");
@@ -91,7 +86,6 @@ public class GameOverManager : MonoBehaviour
                 Debug.Log("No victoryText component assigned");
             }
         }
-        // If no victory panel, create one
         else
         {
             Debug.Log("No victory panel found, creating one");
@@ -101,10 +95,12 @@ public class GameOverManager : MonoBehaviour
         StartCoroutine(LoadNextSceneAfterDelay());
     }
 
+
+
     // New method to reset static variables and restart the game
+
     void ResetGame()
     {
-        // Reset static variables from ChickenController
         if (ChickenController.chickens != null)
         {
             Debug.Log("Clearing chickens list before scene reload");
@@ -114,24 +110,20 @@ public class GameOverManager : MonoBehaviour
         // Reset time scale
         Time.timeScale = 1;
 
-        // Reload the scene
         SceneManager.LoadScene("scene1");
         Debug.Log("Reset game and reloaded scene");
     }
 
-    // Creates a simple victory text if no victory panel exists
     private void CreateVictoryText()
     {
         Debug.Log("Creating victory text from scratch");
 
-        // Create a simple UI text to display victory
         GameObject victoryObj = new GameObject("VictoryText");
         Canvas canvas = FindObjectOfType<Canvas>();
 
         if (canvas == null)
         {
             Debug.Log("No canvas found, creating one");
-            // Create canvas if none exists
             GameObject canvasObj = new GameObject("Canvas");
             canvas = canvasObj.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -141,7 +133,6 @@ public class GameOverManager : MonoBehaviour
 
         victoryObj.transform.SetParent(canvas.transform, false);
 
-        // Try to use TextMeshPro if available
         bool usedTMP = false;
         try
         {
@@ -159,7 +150,6 @@ public class GameOverManager : MonoBehaviour
             usedTMP = false;
         }
 
-        // Fallback to regular Text if TMP fails
         if (!usedTMP)
         {
             UnityEngine.UI.Text text = victoryObj.AddComponent<UnityEngine.UI.Text>();
@@ -175,7 +165,6 @@ public class GameOverManager : MonoBehaviour
         rect.anchoredPosition = Vector2.zero;
         rect.sizeDelta = new Vector2(600, 100);
 
-        // Add instructions text
         GameObject instructionsObj = new GameObject("VictoryInstructions");
         instructionsObj.transform.SetParent(canvas.transform, false);
 
@@ -208,7 +197,6 @@ public class GameOverManager : MonoBehaviour
     {
         bool shouldCheckInput = gameOverPanel.activeSelf;
 
-        // Also check for victory panel if it exists
         if (victoryPanel != null)
         {
             shouldCheckInput = shouldCheckInput || victoryPanel.activeSelf;
@@ -216,12 +204,12 @@ public class GameOverManager : MonoBehaviour
 
         if (shouldCheckInput)
         {
-            if (Input.GetKeyDown(KeyCode.Return)) // Entrée pour rejouer
+            if (Input.GetKeyDown(KeyCode.Return))
             {
                 Debug.Log("Enter key pressed, restarting game");
                 ResetGame();
             }
-            else if (Input.GetKeyDown(KeyCode.Escape)) // Échap pour quitter
+            else if (Input.GetKeyDown(KeyCode.Escape))
             {
                 Debug.Log("Escape key pressed, quitting game");
                 Application.Quit();
@@ -232,6 +220,9 @@ public class GameOverManager : MonoBehaviour
         }
     }
 
+}
+
+
     private IEnumerator LoadNextSceneAfterDelay()
     {
         yield return new WaitForSecondsRealtime(2f); // Laisse le temps d'afficher la victoire
@@ -240,4 +231,5 @@ public class GameOverManager : MonoBehaviour
     }
 
 }
+
 

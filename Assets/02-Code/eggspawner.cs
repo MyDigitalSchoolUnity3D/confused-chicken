@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class EggSpawner : MonoBehaviour
 {
@@ -7,14 +8,20 @@ public class EggSpawner : MonoBehaviour
     public float gridSize = 1f;
     public int gridWidth = 16;
     public int gridHeight = 9;
-    private int eggsEaten = 0;
+    [SerializeField] private int eggsEaten = 0;
     private GameObject currentEgg;
     private int gridXMin, gridXMax, gridYMin, gridYMax;
+    private bool isProcessingEgg = false;
 
     void Start()
     {
+        eggsEaten = 0;
+        isProcessingEgg = false;
+
         CalculateGridBounds();
         SpawnEgg();
+
+        Debug.Log($"Initial setup: eggsToEat = {eggsToEat}, eggsEaten = {eggsEaten}");
     }
 
     void CalculateGridBounds()
@@ -30,7 +37,6 @@ public class EggSpawner : MonoBehaviour
     {
         Debug.Log($"Eggs eaten: {eggsEaten} / {eggsToEat}");
 
-        // Check if we've reached the maximum number of eggs
         if (eggsEaten >= eggsToEat)
         {
             Debug.Log("All eggs have been eaten! Triggering victory!");
@@ -47,27 +53,69 @@ public class EggSpawner : MonoBehaviour
         currentEgg = Instantiate(eggPrefab, Vector2.zero, Quaternion.identity);
         currentEgg.transform.localPosition = spawnPosition;
 
-        // Make sure the egg has the correct tag
         if (currentEgg.tag != "Egg")
         {
             Debug.LogWarning("Egg prefab does not have 'Egg' tag! Setting it now.");
             currentEgg.tag = "Egg";
         }
+
+        MonoBehaviour[] scripts = currentEgg.GetComponents<MonoBehaviour>();
+        foreach (MonoBehaviour script in scripts)
+        {
+            if (script != null && script.GetType() != typeof(EggSpawner))
+            {
+                Debug.LogWarning("Removing script from egg: " + script.GetType().Name);
+                Destroy(script);
+            }
+        }
     }
 
     public void EggEaten()
     {
+        if (isProcessingEgg)
+        {
+            Debug.Log("Ignoring duplicate EggEaten() call - already processing an egg");
+            return;
+        }
+
+        isProcessingEgg = true;
+
         if (currentEgg != null)
         {
+            Debug.Log("Processing egg eaten event...");
+
             Destroy(currentEgg);
             eggsEaten++;
-            SpawnEgg(); // This will check if we've reached eggsToEat and trigger victory if needed
+            Debug.Log($"After eating egg: {eggsEaten} / {eggsToEat}");
+
+            StartCoroutine(ProcessNextEgg());
+        }
+        else
+        {
+            Debug.LogWarning("EggEaten called but currentEgg is null!");
+            isProcessingEgg = false;
         }
     }
 
-    private void TriggerVictory()
+    private IEnumerator ProcessNextEgg()
     {
-        // Find the GameOverManager and call TriggerVictory
+        yield return new WaitForFixedUpdate();
+
+        if (eggsEaten >= eggsToEat)
+        {
+            Debug.Log("Final egg eaten! Victory achieved!");
+            TriggerVictory();
+        }
+        else
+        {
+            SpawnEgg();
+        }
+
+        isProcessingEgg = false;
+    }
+
+    public void TriggerVictory()
+    {
         GameOverManager gameOverManager = FindObjectOfType<GameOverManager>();
         if (gameOverManager != null)
         {

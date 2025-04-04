@@ -3,21 +3,24 @@ using UnityEngine;
 public class Egg : MonoBehaviour
 {
     private EggSpawner spawner;
+    private bool hasBeenEaten = false;
 
     void Start()
     {
-        spawner = FindObjectOfType<EggSpawner>();  // Find the spawner in the scene
+        spawner = FindObjectOfType<EggSpawner>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Egg touched by: " + other.gameObject.name); // Check which object is colliding
+        if (hasBeenEaten) return;
 
-        if (other.CompareTag("Chicken")) // Ensure your snake has the tag "Snake"
+        Debug.Log("Egg touched by: " + other.gameObject.name);
+        if (other.CompareTag("Chicken"))
         {
             Debug.Log("Chicken ate the egg!");
+            hasBeenEaten = true;
+
             spawner.EggEaten();
-            Destroy(gameObject);  // Remove the egg
         }
     }
 }
