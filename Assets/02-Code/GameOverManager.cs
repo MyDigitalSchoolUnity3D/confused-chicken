@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameOverManager : MonoBehaviour
 {
@@ -96,6 +97,8 @@ public class GameOverManager : MonoBehaviour
             Debug.Log("No victory panel found, creating one");
             CreateVictoryText();
         }
+
+        StartCoroutine(LoadNextSceneAfterDelay());
     }
 
     // New method to reset static variables and restart the game
@@ -228,5 +231,13 @@ public class GameOverManager : MonoBehaviour
             }
         }
     }
+
+    private IEnumerator LoadNextSceneAfterDelay()
+    {
+        yield return new WaitForSecondsRealtime(2f); // Laisse le temps d'afficher la victoire
+        Time.timeScale = 1; // Remet le jeu en route
+        UnityEngine.SceneManagement.SceneManager.LoadScene("scene2");
+    }
+
 }
 
